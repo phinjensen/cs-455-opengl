@@ -1,5 +1,6 @@
 // Local Headers
 #include "glitter.hpp"
+#include "ShaderHelpers.h"
 
 // System Headers
 #include <glad/glad.h>
@@ -31,6 +32,12 @@ int main(int argc, char * argv[]) {
     gladLoadGL();
     fprintf(stderr, "OpenGL %s\n", glGetString(GL_VERSION));
 
+	// **************************************
+	// Setup Vertex arrays here
+	// **************************************
+
+	// **************************************
+	
     // Rendering Loop
     while (glfwWindowShouldClose(mWindow) == false) {
         if (glfwGetKey(mWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS)
@@ -40,9 +47,15 @@ int main(int argc, char * argv[]) {
         glClearColor(0.25f, 0.25f, 0.25f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
+		// **********************************
+		// Add rendering code here
+
+		// **********************************
+
         // Flip Buffers and Draw
         glfwSwapBuffers(mWindow);
         glfwPollEvents();
     }   glfwTerminate();
+
     return EXIT_SUCCESS;
 }
