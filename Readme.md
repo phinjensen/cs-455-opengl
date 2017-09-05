@@ -46,9 +46,13 @@ Windowing and Input     | [glfw](https://github.com/glfw/glfw)
 OpenGL Mathematics      | [glm](https://github.com/g-truc/glm)
 Texture Loading         | [stb](https://github.com/nothings/stb)
 
-If you started the tutorials by installing [SDL](https://www.libsdl.org/), [GLEW](https://github.com/nigels-com/glew), or [SOIL](http://www.lonesock.net/soil.html), *stop*. The libraries bundled with Glitter supersede or are functional replacements for these libraries.
+**Added for BYU CS455**
 
-I have provided sample implementations of an intrusive tree mesh and shader class, if you're following along with the tutorials and need another reference point. These were used to generate the screenshot above, but will not compile out-of-the-box. I leave that exercise for the reader. :smiley:
+In addition to the libraries included in the original Glitter repository we have provided a file to help with the tedious process of loading and compiling GLSL shaders. ShaderHelpers.h and ShaderHelpers.cpp are included in the project by default. To load your shaders call LoadProgram.
+
+```GLuint myShader = LoadProgram("path/to/vertex/shader", "path/to/fragment/shader");```
+
+This will attempt to load and compile the provided vertex and fragment shaders and output any errors to the console. It returns the ID used by OpenGL to identify the shader on success and 0 on failure. Feel free to modify these files or ignore them if they don't meet your needs, they are simply provided for your convenience. 
 
 ## License
 >The MIT License (MIT)
