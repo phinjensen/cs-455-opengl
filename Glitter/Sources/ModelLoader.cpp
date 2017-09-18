@@ -1,6 +1,9 @@
 #include "ModelLoader.h"
 
 #include <iostream>
+#include <filesystem>
+
+namespace fs = std::experimental::filesystem;
 
 glm::vec3 AiVec3ToGlm3(aiVector3D v) {
 	glm::vec3 res;
@@ -17,7 +20,7 @@ glm::vec2 AiVec3ToGlm2(aiVector3D v) {
 	return res;
 }
 
-static void ProcessNode(aiNode* node, const aiScene* scene, mlModel& modelOut) {
+static void ProcessNode(aiNode* node, const aiScene* scene, const fs::path& directory, mlModel& modelOut) {
 	for (int meshIdx = 0; meshIdx < node->mNumMeshes; meshIdx++) {
 		aiMesh* mesh = scene->mMeshes[node->mMeshes[meshIdx]];
 
@@ -48,29 +51,34 @@ static void ProcessNode(aiNode* node, const aiScene* scene, mlModel& modelOut) {
 			aiMaterial* mat = scene->mMaterials[mesh->mMaterialIndex];
 			aiString str;
 			mat->GetTexture(aiTextureType_DIFFUSE, 0, &str);
-			mlMesh.textureFile = std::string(str.C_Str());
+			fs::path tex(str.C_Str());
+			mlMesh.textureFile = (directory / tex).string();
 		}
 
 		modelOut.meshes.push_back(mlMesh);
 	}
 
 	for (int cIdx = 0; cIdx < node->mNumChildren; cIdx++) {
-		ProcessNode(node->mChildren[cIdx], scene, modelOut);
+		ProcessNode(node->mChildren[cIdx], scene, directory, modelOut);
 	}
 }
 
-bool LoadModel(const std::string& modelFile, mlModel& modelOut) {
+bool LoadModel(const std::string& directory, const std::string& modelFile, mlModel& modelOut) {
+	fs::path dir(directory);
+	fs::path model(modelFile);
+	fs::path full = dir / model;
 	Assimp::Importer imp;
-	const aiScene* scene = imp.ReadFile(modelFile,
+	const aiScene* scene = imp.ReadFile(full.string(),
 		aiProcess_GenNormals |
-		aiProcess_Triangulate);
+		aiProcess_Triangulate |
+		aiProcess_FlipUVs);
 	
 	if (!scene || !scene->mRootNode) {
 		std::cout << imp.GetErrorString() << std::endl;
 		return false;
 	}
 
-	ProcessNode(scene->mRootNode, scene, modelOut);
+	ProcessNode(scene->mRootNode, scene, dir, modelOut);
 
 	return true;
 }

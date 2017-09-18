@@ -28,6 +28,6 @@ struct mlModel {
 
 // Attempts to load the 3d model contained in modelFile. Fills out the modelOut
 // struct and returns true on success. Returns false and prints errors on failure.
-bool LoadModel(const std::string& modelFile, mlModel& modelOut);
+bool LoadModel(const std::string& directory, const std::string& modelFile, mlModel& modelOut);
 
 #endif
