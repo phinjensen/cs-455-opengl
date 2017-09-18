@@ -1,9 +1,6 @@
 #include "ModelLoader.h"
 
 #include <iostream>
-#include <filesystem>
-
-namespace fs = std::experimental::filesystem;
 
 glm::vec3 AiVec3ToGlm3(aiVector3D v) {
 	glm::vec3 res;
@@ -20,7 +17,7 @@ glm::vec2 AiVec3ToGlm2(aiVector3D v) {
 	return res;
 }
 
-static void ProcessNode(aiNode* node, const aiScene* scene, const fs::path& directory, mlModel& modelOut) {
+static void ProcessNode(aiNode* node, const aiScene* scene, const std::string& directory, mlModel& modelOut) {
 	for (int meshIdx = 0; meshIdx < node->mNumMeshes; meshIdx++) {
 		aiMesh* mesh = scene->mMeshes[node->mMeshes[meshIdx]];
 
@@ -51,8 +48,8 @@ static void ProcessNode(aiNode* node, const aiScene* scene, const fs::path& dire
 			aiMaterial* mat = scene->mMaterials[mesh->mMaterialIndex];
 			aiString str;
 			mat->GetTexture(aiTextureType_DIFFUSE, 0, &str);
-			fs::path tex(str.C_Str());
-			mlMesh.textureFile = (directory / tex).string();
+			std::string tex(str.C_Str());
+			mlMesh.textureFile = directory + tex;
 		}
 
 		modelOut.meshes.push_back(mlMesh);
@@ -64,11 +61,18 @@ static void ProcessNode(aiNode* node, const aiScene* scene, const fs::path& dire
 }
 
 bool LoadModel(const std::string& directory, const std::string& modelFile, mlModel& modelOut) {
-	fs::path dir(directory);
-	fs::path model(modelFile);
-	fs::path full = dir / model;
+	std::string dir = directory;
+	std::string full;
+	if (dir[dir.length() - 1] == '/' || dir[dir.length() - 1] == '\\') {
+		full = dir + modelFile;
+	}
+	else {
+		dir += '/';
+		full = dir + modelFile;
+	}
+
 	Assimp::Importer imp;
-	const aiScene* scene = imp.ReadFile(full.string(),
+	const aiScene* scene = imp.ReadFile(full,
 		aiProcess_GenNormals |
 		aiProcess_Triangulate |
 		aiProcess_FlipUVs);
