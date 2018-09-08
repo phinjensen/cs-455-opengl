@@ -34,6 +34,8 @@ int main(int argc, char * argv[]) {
     gladLoadGL();
     fprintf(stderr, "OpenGL %s\n", glGetString(GL_VERSION));
 
+	glEnable(GL_DEPTH_TEST);
+
 	// **************************************
 	// Setup Vertex arrays here
 	// **************************************
@@ -47,7 +49,7 @@ int main(int argc, char * argv[]) {
 
         // Background Fill Color
         glClearColor(0.25f, 0.25f, 0.25f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// **********************************
 		// Add rendering code here
