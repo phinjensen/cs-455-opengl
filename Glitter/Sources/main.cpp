@@ -1,4 +1,5 @@
 // Local Headers
+#include "glm/fwd.hpp"
 #define STB_IMAGE_IMPLEMENTATION
 #include "glitter.hpp"
 #include "ShaderHelpers.h"
@@ -11,6 +12,7 @@
 // Standard Headers
 #include <cstdio>
 #include <cstdlib>
+#include <vector>
 
 int main(int argc, char * argv[]) {
 
@@ -39,7 +41,40 @@ int main(int argc, char * argv[]) {
 	// **************************************
 	// Setup Vertex arrays here
 	// **************************************
+    GLuint my_shader = LoadProgram("/home/phin/CS 455/Glitter/Glitter/Shaders/basic.vert", "/home/phin/CS 455/Glitter/Glitter/Shaders/basic.frag");
 
+    GLuint VAO;
+    GLuint VBO;
+    float vertices[] = {
+        -0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,
+         0.5f, -0.5f,  0.0f,  0.0f,  1.0f,  0.0f,
+        -0.5f,  0.5f,  0.0f,  0.0f,  0.0f,  1.0f,
+
+        -0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f,
+         0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,
+         0.5f, -0.5f,  0.0f,  0.0f,  0.0f,  1.0f,
+
+        -0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f,
+         0.0f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+         0.5f,  0.5f,  0.0f,  0.0f,  0.0f,  1.0f,
+    };
+
+    int triangles = 3;
+
+    glGenVertexArrays(triangles, &VAO);
+    glBindVertexArray(VAO);
+
+    glGenBuffers(1, &VBO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, triangles * (9 + 9) * sizeof(float), vertices, GL_STATIC_DRAW);
+
+    GLint position = glGetAttribLocation(my_shader, "position");
+    glEnableVertexAttribArray(position);
+    glVertexAttribPointer(position, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), 0);
+
+    GLint color = glGetAttribLocation(my_shader, "ColorIn");
+    glEnableVertexAttribArray(color);
+    glVertexAttribPointer(color, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)(3 * sizeof(float)));
 	// **************************************
 	
     // Rendering Loop
@@ -53,7 +88,8 @@ int main(int argc, char * argv[]) {
 
 		// **********************************
 		// Add rendering code here
-
+        glUseProgram(my_shader);
+        glDrawArrays(GL_TRIANGLES, 0, triangles * 3);
 		// **********************************
 
         // Flip Buffers and Draw
